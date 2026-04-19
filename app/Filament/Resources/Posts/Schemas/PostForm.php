@@ -31,13 +31,23 @@ class PostForm
                         // 2 kolom untuk field utama
                         Group::make([
                             TextInput::make('title')
-                                ->required()
-                                ->minLength(5),
+                                ->rules('required | min:3 | max:10')
+                                ->minLength(5)
+                                ->validationMessages([
+                                'required' => 'Judul wajib diisi!',
+                                'min' => 'Judul minimal 5 karakter!',
+                            ]),
                             TextInput::make('slug')
-                                ->required()
-                                ->unique(),
+                                ->rules('required')
+                                ->minLength(3)
+                                ->unique()
+                                ->validationMessages([
+                                'required' => 'Slug wajib diisi!',
+                                'unique' => 'Slug sudah digunakan!',
+                           ]),
                             Select::make('category_id')
                                 ->relationship('category', 'name')
+                                ->required()
                                 ->preload()
                                 ->searchable(),
                             ColorPicker::make('color'),
@@ -56,6 +66,7 @@ class PostForm
                         ->icon('heroicon-o-photo')
                         ->schema([
                             FileUpload::make('image')
+                                ->required()
                                 ->disk('public')
                                 ->directory('post'),
                         ]),
